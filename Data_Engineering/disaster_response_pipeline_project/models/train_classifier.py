@@ -21,6 +21,7 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
@@ -45,7 +46,14 @@ def build_model():
     ('tfidf', TfidfVectorizer()),                 
     ('clf', MultiOutputClassifier(DecisionTreeClassifier(random_state=0)))  
     ])
-    return pipeline
+    param_grid = {
+    'clf__estimator__max_depth': [10, 20],  
+    'clf__estimator__min_samples_split': [2, 10],
+    }
+
+    gcs = GridSearchCV(estimator=pipeline, param_grid=param_grid,verbose=3)
+                               
+    return gcs
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
